@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Work Shift Progress Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        .progress-container {
+            width: 100%;
+            background-color: #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+        .progress-bar {
+            height: 30px;
+            background-color: #4CAF50;
+            width: 0%;
+            transition: width 1s;
+        }
+        .percentage {
+            margin-top: 10px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Work Shift Progress</h1>
+    <div class="progress-container">
+        <div class="progress-bar" id="progress-bar"></div>
+    </div>
+    <p class="percentage" id="percentage">Checking shift...</p>
+    
+    <script>
+        function getShiftTimes() {
+            const now = new Date();
+            const day = now.getDay();
+            let start, end;
+            
+            if (day >= 2 && day <= 5) { // Tuesday to Friday
+                start = new Date();
+                start.setHours(16, 0, 0, 0);
+                end = new Date();
+                end.setHours(20, 0, 0, 0);
+            } else if (day === 6) { // Saturday
+                start = new Date();
+                start.setHours(8, 0, 0, 0);
+                end = new Date();
+                end.setHours(12, 0, 0, 0);
+            }
+            
+            return { start, end };
+        }
+
+        function calculateProgress() {
+            const now = new Date();
+            const shift = getShiftTimes();
+            if (!shift.start || !shift.end || now < shift.start || now > shift.end) {
+                document.getElementById('percentage').innerText = "You are off shift";
+                document.getElementById('progress-bar').style.width = "0%";
+                return;
+            }
+
+            const totalDuration = shift.end - shift.start;
+            const elapsed = now - shift.start;
+            const percentage = (elapsed / totalDuration) * 100;
+            
+            document.getElementById('progress-bar').style.width = percentage.toFixed(2) + '%';
+            document.getElementById('percentage').innerText = percentage.toFixed(2) + '%';
+        }
+        
+        calculateProgress();
+        setInterval(calculateProgress, 60000); // Update every minute
+    </script>
+</body>
+</html>
